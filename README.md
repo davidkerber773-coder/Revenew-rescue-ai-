@@ -1,46 +1,42 @@
 # Revenue Rescue AI
 
-A lightweight AI-inspired revenue recovery dashboard for small businesses. It helps estimate missed revenue, identifies likely churn/conversion issues, and suggests recovery actions.
+A modern revenue recovery and retention dashboard for businesses that want to find missed opportunities, reduce churn, and improve conversion.
+
+## Overview
+Revenue Rescue AI analyzes key operating metrics to estimate recoverable revenue, identify likely churn risk, and recommend targeted actions to improve conversion and retention.
 
 ## Features
-- Dashboard UI for entering basic business metrics
-- Revenue leakage analysis
-- Churn / conversion risk scoring
-- Actionable recommendation engine
-- REST API for analysis
+- Revenue recovery dashboard
+- Churn and conversion scoring
+- Opportunity analysis API
+- Recommendations engine
+- Responsive frontend UI
 
-## Quick start
+## Local setup
 
 1. Install dependencies:
    ```bash
    npm install
    ```
-2. Start the app:
+
+2. Start the server:
    ```bash
    npm start
    ```
-3. Open:
+
+3. Open the app:
    ```text
    http://localhost:3000
    ```
 
-## Environment variables
-
-Create a `.env` file based on `.env.example` if needed:
-
-```bash
-PORT=3000
-OPENAI_API_KEY=your_key_here
-```
-
-## API
+## API endpoints
 
 ### Health check
 ```bash
 curl http://localhost:3000/api/health
 ```
 
-### Analyze revenue opportunity
+### Revenue analysis
 ```bash
 curl -X POST http://localhost:3000/api/analyze \
   -H "Content-Type: application/json" \
@@ -54,5 +50,12 @@ curl -X POST http://localhost:3000/api/analyze \
   }'
 ```
 
-## Notes
-This project is intentionally lightweight and runs without any external API key by default. If you add an OpenAI key later, you can extend the analysis logic with model-powered recommendations.
+## Environment variables
+Create a `.env` file if you want to add custom config:
+
+```bash
+PORT=3000
+```
+
+## Project status
+This version is a working MVP: the backend, API, and frontend dashboard are all functional.

@@ -1,76 +1,238 @@
-const form = document.getElementById('analysisForm');
-const resultBox = document.getElementById('resultBox');
-const statusPill = document.getElementById('statusPill');
-
-async function fetchHealth() {
-  try {
-    const response = await fetch('/api/health');
-    const data = await response.json();
-    if (data.status === 'ok') {
-      statusPill.textContent = 'System ready';
-    }
-  } catch (error) {
-    statusPill.textContent = 'Offline';
-  }
+:root {
+  --bg: #07151d;
+  --bg-soft: #0d1e2d;
+  --panel: rgba(18, 31, 44, 0.88);
+  --panel-alt: rgba(30, 49, 68, 0.9);
+  --sidebar: rgba(12, 22, 31, 0.95);
+  --line: rgba(255, 255, 255, 0.08);
+  --accent: #74f0d2;
+  --accent-2: #7ea8ff;
+  --text: #e8f5ff;
+  --muted: #a9c0d2;
+  --danger: #ff826d;
+  --shadow: rgba(0, 0, 0, 0.2);
 }
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
+* {
+  box-sizing: border-box;
+}
 
-  const formData = new FormData(form);
-  const payload = Object.fromEntries(formData.entries());
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #07151d, #0e1f2b 35%, #0d1424 100%);
+  color: var(--text);
+}
 
-  statusPill.textContent = 'Analyzing...';
+.page-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
 
-  try {
-    const response = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+.sidebar {
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
+  padding: 28px 22px;
+}
 
-    const data = await response.json();
-    const analysis = data.analysis;
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 35px;
+}
 
-    resultBox.innerHTML = `
-      <div class="metrics">
-        <div>
-          <span class="label">Opportunity score</span>
-          <strong>${analysis.score}/100</strong>
-        </div>
-        <div>
-          <span class="label">Status</span>
-          <strong>${analysis.opportunityLabel}</strong>
-        </div>
-        <div>
-          <span class="label">Potential recovery</span>
-          <strong>$${analysis.summary.totalOpportunity.toLocaleString()}</strong>
-        </div>
-      </div>
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #03151c;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
 
-      <div class="summary-block">
-        <h3>Quick summary</h3>
-        <ul>
-          <li>Monthly revenue: $${analysis.summary.monthlyRevenue.toLocaleString()}</li>
-          <li>Recurring revenue: $${analysis.summary.recurringRevenue.toLocaleString()}</li>
-          <li>Churn rate: ${analysis.summary.churnRate}%</li>
-          <li>Conversion rate: ${analysis.summary.conversionRate}%</li>
-        </ul>
-      </div>
+.eyebrow,
+.section-label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
 
-      <div class="summary-block">
-        <h3>Recommended actions</h3>
-        <ul>
-          ${analysis.recommendations.map((item) => `<li>${item}</li>`).join('')}
-        </ul>
-      </div>
-    `;
+h1, h2, h3, h4, p {
+  margin-top: 0;
+}
 
-    statusPill.textContent = 'Analysis complete';
-  } catch (error) {
-    resultBox.innerHTML = '<p>There was an error analyzing the data. Please try again.</p>';
-    statusPill.textContent = 'Error';
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.nav {
+  display: grid;
+  gap: 10px;
+}
+
+.nav-item {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(116, 240, 210, 0.08);
+  color: var(--text);
+}
+
+.main-panel {
+  padding: 30px 28px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.status-pill {
+  background: rgba(116, 240, 210, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(116, 240, 210, 0.32);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 700;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 18px 32px var(--shadow);
+}
+
+form {
+  display: grid;
+  gap: 15px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+input {
+  background: rgba(7, 21, 29, 0.8);
+  color: var(--text);
+  border: 1px solid rgba(126, 168, 255, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 6px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #03151c;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.result-box {
+  min-height: 280px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.metric-card,
+.info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.metric-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-bottom: 10px;
+}
+
+.metric-card strong {
+  font-size: 1.3rem;
+}
+
+.info-card {
+  margin-top: 14px;
+}
+
+.info-card h4 {
+  margin-bottom: 10px;
+}
+
+.info-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 880px) {
+  .page-shell {
+    grid-template-columns: 1fr;
   }
-});
 
-fetchHealth();
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -19,14 +19,28 @@ function buildAnalysis(data) {
   const activeCustomers = Number(data.activeCustomers) || 0;
 
   const atRiskRevenue = recurringRevenue * (churnRate / 100);
-  const potentialLift = Math.max(0, (conversionRate * 0.8) * avgOrderValue * 30);
-  const totalOpportunity = Math.max(0, atRiskRevenue + potentialLift);
-  const score = Math.min(100, Math.round((churnRate * 1.4 + (100 - conversionRate) * 0.7 + (monthlyRevenue > 0 ? (atRiskRevenue / monthlyRevenue) * 100 : 0))));
+  const conversionBoost = Math.max(0, (conversionRate * 0.8) * avgOrderValue * 30);
+  const totalOpportunity = Math.max(0, atRiskRevenue + conversionBoost);
+
+  const score = Math.min(
+    100,
+    Math.round(
+      churnRate * 1.5 +
+        (100 - conversionRate) * 0.8 +
+        (monthlyRevenue > 0 ? (atRiskRevenue / monthlyRevenue) * 120 : 0)
+    )
+  );
 
   const recommendations = [
-    churnRate > 4 ? 'Launch a churn-prevention campaign for recently inactive customers.' : 'Keep retention messaging active with win-back offers.',
-    conversionRate < 3 ? 'Improve checkout flow and bundle pricing to raise conversion.' : 'Double down on your strongest sales channels and upsell moments.',
-    avgOrderValue < 150 ? 'Increase average order value with bundles, subscriptions, and cross-sells.' : 'Focus on retention and customer lifetime value optimization.'
+    churnRate > 4
+      ? 'Launch a churn-prevention campaign for recently inactive customers.'
+      : 'Keep retention messaging active with win-back offers.',
+    conversionRate < 3
+      ? 'Improve checkout flow and bundle pricing to increase conversion.'
+      : 'Double down on the strongest sales channels and upsell moments.',
+    avgOrderValue < 150
+      ? 'Increase average order value through bundles, subscriptions, and cross-sells.'
+      : 'Focus on customer retention and lifetime value optimization.'
   ];
 
   return {
@@ -40,7 +54,8 @@ function buildAnalysis(data) {
       totalOpportunity: Math.round(totalOpportunity)
     },
     score,
-    opportunityLabel: score >= 75 ? 'High urgency' : score >= 45 ? 'Moderate opportunity' : 'Healthy but improvable',
+    opportunityLabel:
+      score >= 75 ? 'High urgency' : score >= 45 ? 'Moderate opportunity' : 'Healthy but improvable',
     recommendations
   };
 }
@@ -70,4 +85,3 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Revenue Rescue AI running at http://localhost:${PORT}`);
 });
-

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revenue Rescue AI</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">R</div>
+          <div>
+            <p class="eyebrow">Revenue intelligence</p>
+            <h2>Revenue Rescue AI</h2>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav-item active" href="#">Overview</a>
+          <a class="nav-item" href="#">Recovery</a>
+          <a class="nav-item" href="#">Retention</a>
+          <a class="nav-item" href="#">Forecast</a>
+        </nav>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="section-label">Revenue operations</p>
+            <h1>Opportunity dashboard</h1>
+          </div>
+          <div id="statusPill" class="status-pill">System ready</div>
+        </header>
+
+        <section class="layout">
+          <div class="panel form-panel">
+            <h3>Business snapshot</h3>
+            <form id="analysisForm">
+              <label>
+                Monthly revenue
+                <input type="number" name="monthlyRevenue" value="125000" step="100" />
+              </label>
+              <label>
+                Recurring revenue
+                <input type="number" name="recurringRevenue" value="72000" step="100" />
+              </label>
+              <label>
+                Churn rate (%)
+                <input type="number" name="churnRate" value="6" step="0.1" />
+              </label>
+              <label>
+                Conversion rate (%)
+                <input type="number" name="conversionRate" value="2.5" step="0.1" />
+              </label>
+              <label>
+                Average order value
+                <input type="number" name="avgOrderValue" value="180" step="1" />
+              </label>
+              <label>
+                Active customers
+                <input type="number" name="activeCustomers" value="430" step="1" />
+              </label>
+              <button type="submit">Analyze opportunity</button>
+            </form>
+          </div>
+
+          <div class="panel result-panel">
+            <h3>Opportunity insight</h3>
+            <div id="resultBox" class="result-box">
+              <p>Run an analysis to see your projected revenue recovery opportunity.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

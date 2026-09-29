@@ -33,23 +33,23 @@ form.addEventListener('submit', async (event) => {
     const analysis = data.analysis;
 
     resultBox.innerHTML = `
-      <div class="metrics">
-        <div>
-          <span class="label">Opportunity score</span>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Opportunity score</span>
           <strong>${analysis.score}/100</strong>
         </div>
-        <div>
-          <span class="label">Status</span>
+        <div class="metric-card">
+          <span class="metric-label">Priority</span>
           <strong>${analysis.opportunityLabel}</strong>
         </div>
-        <div>
-          <span class="label">Potential recovery</span>
+        <div class="metric-card">
+          <span class="metric-label">Potential recovery</span>
           <strong>$${analysis.summary.totalOpportunity.toLocaleString()}</strong>
         </div>
       </div>
 
-      <div class="summary-block">
-        <h3>Quick summary</h3>
+      <div class="info-card">
+        <h4>Quick summary</h4>
         <ul>
           <li>Monthly revenue: $${analysis.summary.monthlyRevenue.toLocaleString()}</li>
           <li>Recurring revenue: $${analysis.summary.recurringRevenue.toLocaleString()}</li>
@@ -58,8 +58,8 @@ form.addEventListener('submit', async (event) => {
         </ul>
       </div>
 
-      <div class="summary-block">
-        <h3>Recommended actions</h3>
+      <div class="info-card">
+        <h4>Suggested actions</h4>
         <ul>
           ${analysis.recommendations.map((item) => `<li>${item}</li>`).join('')}
         </ul>
