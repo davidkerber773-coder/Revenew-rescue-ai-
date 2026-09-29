@@ -1,62 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Revenue Rescue AI</title>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <header class="hero">
+const form = document.getElementById('analysisForm');
+const resultBox = document.getElementById('resultBox');
+const statusPill = document.getElementById('statusPill');
+
+async function fetchHealth() {
+  try {
+    const response = await fetch('/api/health');
+    const data = await response.json();
+    if (data.status === 'ok') {
+      statusPill.textContent = 'System ready';
+    }
+  } catch (error) {
+    statusPill.textContent = 'Offline';
+  }
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+
+  statusPill.textContent = 'Analyzing...';
+
+  try {
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    const analysis = data.analysis;
+
+    resultBox.innerHTML = `
+      <div class="metrics">
         <div>
-          <p class="eyebrow">Revenue recovery</p>
-          <h1>Revenue Rescue AI</h1>
+          <span class="label">Opportunity score</span>
+          <strong>${analysis.score}/100</strong>
         </div>
-        <div class="status-pill" id="statusPill">System ready</div>
-      </header>
+        <div>
+          <span class="label">Status</span>
+          <strong>${analysis.opportunityLabel}</strong>
+        </div>
+        <div>
+          <span class="label">Potential recovery</span>
+          <strong>$${analysis.summary.totalOpportunity.toLocaleString()}</strong>
+        </div>
+      </div>
 
-      <main class="layout">
-        <section class="panel form-panel">
-          <h2>Business snapshot</h2>
-          <form id="analysisForm">
-            <label>
-              Monthly revenue
-              <input type="number" name="monthlyRevenue" value="125000" step="100" />
-            </label>
-            <label>
-              Recurring revenue
-              <input type="number" name="recurringRevenue" value="72000" step="100" />
-            </label>
-            <label>
-              Churn rate (%)
-              <input type="number" name="churnRate" value="6" step="0.1" />
-            </label>
-            <label>
-              Conversion rate (%)
-              <input type="number" name="conversionRate" value="2.5" step="0.1" />
-            </label>
-            <label>
-              Average order value
-              <input type="number" name="avgOrderValue" value="180" step="1" />
-            </label>
-            <label>
-              Active customers
-              <input type="number" name="activeCustomers" value="430" step="1" />
-            </label>
-            <button type="submit">Analyze opportunity</button>
-          </form>
-        </section>
+      <div class="summary-block">
+        <h3>Quick summary</h3>
+        <ul>
+          <li>Monthly revenue: $${analysis.summary.monthlyRevenue.toLocaleString()}</li>
+          <li>Recurring revenue: $${analysis.summary.recurringRevenue.toLocaleString()}</li>
+          <li>Churn rate: ${analysis.summary.churnRate}%</li>
+          <li>Conversion rate: ${analysis.summary.conversionRate}%</li>
+        </ul>
+      </div>
 
-        <section class="panel results-panel">
-          <h2>Opportunity insight</h2>
-          <div id="resultBox" class="result-box">
-            <p>Run an analysis to see your revenue recovery opportunity.</p>
-          </div>
-        </section>
-      </main>
-    </div>
+      <div class="summary-block">
+        <h3>Recommended actions</h3>
+        <ul>
+          ${analysis.recommendations.map((item) => `<li>${item}</li>`).join('')}
+        </ul>
+      </div>
+    `;
 
-    <script src="/app.js"></script>
-  </body>
-</html>
+    statusPill.textContent = 'Analysis complete';
+  } catch (error) {
+    resultBox.innerHTML = '<p>There was an error analyzing the data. Please try again.</p>';
+    statusPill.textContent = 'Error';
+  }
+});
+
+fetchHealth();
