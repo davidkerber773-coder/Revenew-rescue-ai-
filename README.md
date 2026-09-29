@@ -1,42 +1,67 @@
 # Revenue Rescue AI
 
-A modern revenue recovery and retention dashboard for businesses that want to find missed opportunities, reduce churn, and improve conversion.
+A production-ready SaaS-style revenue recovery dashboard for identifying missed opportunity, churn risk, and conversion bottlenecks.
 
-## Overview
-Revenue Rescue AI analyzes key operating metrics to estimate recoverable revenue, identify likely churn risk, and recommend targeted actions to improve conversion and retention.
+## What it does
+Revenue Rescue AI helps businesses estimate:
+- at-risk recurring revenue
+- conversion and churn risk
+- likely high-value optimization opportunities
+- concrete recovery actions to drive retention and revenue uplift
 
 ## Features
-- Revenue recovery dashboard
-- Churn and conversion scoring
-- Opportunity analysis API
-- Recommendations engine
-- Responsive frontend UI
+- Secure Express API
+- rate-limited endpoints
+- health and readiness checks
+- optional OpenAI-powered recommendations
+- responsive dashboard interface
+- environment-based configuration
 
-## Local setup
+## Local development
 
 1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the server:
+2. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Start the app:
    ```bash
    npm start
    ```
 
-3. Open the app:
+4. Open the app in a browser:
    ```text
    http://localhost:3000
    ```
 
+## Environment variables
+
+Example configuration in `.env`:
+
+```bash
+PORT=3000
+NODE_ENV=development
+OPENAI_API_KEY=
+```
+
 ## API endpoints
 
-### Health check
+### Health
 ```bash
 curl http://localhost:3000/api/health
 ```
 
-### Revenue analysis
+### Readiness
+```bash
+curl http://localhost:3000/api/ready
+```
+
+### Analyze opportunity
 ```bash
 curl -X POST http://localhost:3000/api/analyze \
   -H "Content-Type: application/json" \
@@ -50,12 +75,17 @@ curl -X POST http://localhost:3000/api/analyze \
   }'
 ```
 
-## Environment variables
-Create a `.env` file if you want to add custom config:
+## Deployment notes
+- Use a real `NODE_ENV=production` environment in hosting.
+- Keep `OPENAI_API_KEY` in a secure secret manager, not in source control.
+- Run behind a reverse proxy (Nginx, Vercel, Render, Railway, etc.) for SSL termination and production traffic management.
+- Consider adding a persistent database for saved analyses and user accounts if this is expanded beyond the MVP stage.
 
-```bash
-PORT=3000
-```
-
-## Project status
-This version is a working MVP: the backend, API, and frontend dashboard are all functional.
+## Production readiness summary
+This version includes:
+- HTTP security headers
+- request validation and rate limiting
+- structured health endpoints
+- graceful shutdown
+- optional AI augmentation
+- safe static asset serving
