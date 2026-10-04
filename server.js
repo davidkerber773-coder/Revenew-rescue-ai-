@@ -89,6 +89,35 @@ function buildAnalysis(data = {}) {
   };
 }
 
+function parseAiRecommendations(content) {
+  if (!content) return [];
+
+  try {
+    const trimmed = String(content).trim();
+    const normalized = trimmed.startsWith('```')
+      ? trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+      : trimmed;
+
+    const parsed = JSON.parse(normalized);
+
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item) => typeof item === 'string').slice(0, 3);
+    }
+
+    if (Array.isArray(parsed.recommendations)) {
+      return parsed.recommendations.filter((item) => typeof item === 'string').slice(0, 3);
+    }
+
+    if (typeof parsed === 'string') {
+      return [parsed];
+    }
+  } catch (error) {
+    console.error('Unable to parse AI response:', error.message);
+  }
+
+  return [];
+}
+
 async function getAiRecommendations(payload, baseAnalysis) {
   if (!process.env.OPENAI_API_KEY) {
     return [];
@@ -118,11 +147,7 @@ async function getAiRecommendations(payload, baseAnalysis) {
     });
 
     const content = completion.choices?.[0]?.message?.content;
-    if (!content) return [];
-
-    const parsed = JSON.parse(content);
-    const items = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
-    return items.filter((item) => typeof item === 'string').slice(0, 3);
+    return parseAiRecommendations(content);
   } catch (error) {
     console.error('AI recommendations unavailable:', error.message);
     return [];
@@ -155,12 +180,14 @@ app.post('/api/analyze', async (req, res, next) => {
     const payload = req.body || {};
     const analysis = buildAnalysis(payload);
     const aiRecommendations = await getAiRecommendations(payload, analysis);
+    const recommendations = aiRecommendations.length ? aiRecommendations : analysis.recommendations;
 
     res.json({
       status: 'ok',
       analysis: {
         ...analysis,
-        aiRecommendations: aiRecommendations.length ? aiRecommendations : analysis.recommendations
+        recommendations,
+        aiRecommendations: recommendations
       },
       generatedAt: new Date().toISOString()
     });
