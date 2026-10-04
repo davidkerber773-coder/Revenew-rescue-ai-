@@ -202,10 +202,6 @@ button {
   margin-top: 14px;
 }
 
-.info-card h4 {
-  margin-bottom: 10px;
-}
-
 .info-card ul {
   margin: 0;
   padding-left: 18px;
@@ -216,11 +212,6 @@ button {
 @media (max-width: 880px) {
   .page-shell {
     grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--line);
   }
 
   .layout {
